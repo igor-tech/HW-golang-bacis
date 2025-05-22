@@ -40,24 +40,8 @@ func convert(amount float64, from string, to string) float64 {
 }
 
 func scanUserData() (string, float64, string) {
-	var currenciesFrom string
-	var currenciesTo string
 	var count float64
-	for {
-		fmt.Print("Введите исходную валюту (USD/EUR/RUB): ")
-		_, err := fmt.Scan(&currenciesFrom)
-
-		if err != nil {
-			fmt.Println("Вы ввели некорректную валюту, попробуйте еще раз")
-			continue
-		}
-
-		if checkCurrencies(currenciesFrom) {
-			break
-		}
-
-		fmt.Println("Введите корректную валюту")
-	}
+	currenciesFrom := scanCurrency("Введите исходную валюту (USD/EUR/RUB): ")
 
 	for {
 		fmt.Print("Введите число: ")
@@ -70,25 +54,13 @@ func scanUserData() (string, float64, string) {
 		break
 	}
 
-	for {
-		fmt.Print("Введите целевую валюту (USD/EUR/RUB): ")
-		_, err := fmt.Scan(&currenciesTo)
+	currenciesTo := scanCurrency("Введите целевую валюту (USD/EUR/RUB): ")
 
-		if err != nil {
-			fmt.Println("Вы ввели некорректную валюту, попробуйте еще раз")
-			continue
-		}
-		if currenciesTo == currenciesFrom {
-			fmt.Println("Валюты не должны повторятся")
-			continue
-		}
-
-		if checkCurrencies(currenciesTo) {
-			break
-		}
-
-		fmt.Println("Введите корректную валюту")
+	for currenciesFrom == currenciesTo {
+		println("Валюты не должны совпадать.")
+		currenciesTo = scanCurrency("Введите целевую валюту (USD/EUR/RUB): ")
 	}
+
 	return currenciesFrom, count, currenciesTo
 }
 
@@ -98,4 +70,24 @@ func checkCurrencies(currencies string) bool {
 	}
 
 	return false
+}
+
+func scanCurrency(prompt string) string {
+	var currency string
+	for {
+		fmt.Print(prompt)
+		_, err := fmt.Scan(&currency)
+
+		if err != nil {
+			fmt.Println("Вы ввели некорректную валюту, попробуйте еще раз")
+			continue
+		}
+
+		if checkCurrencies(currency) {
+			break
+		}
+
+		fmt.Println("Введите корректную валюту")
+	}
+	return currency
 }
