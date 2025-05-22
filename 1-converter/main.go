@@ -17,36 +17,26 @@ import (
 После получения всех данных с помощью if / switch вычислений итог и вывести результат.
 */
 
-const USDToEUR = 0.90
-const USDToRUB = 81
-const EURToRUB = USDToRUB / USDToEUR
+const USD = 1.0
+const EUR = 0.90
+const RUB = 81.0
+
+var rates = map[string]float64{
+	"USD": USD,
+	"EUR": EUR,
+	"RUB": RUB,
+}
 
 func main() {
 	fmt.Println(" __ Калькулятор валют __")
 	currenciesFrom, count, currenciesTo := scanUserData()
-	result := calculateCurrencies(count, currenciesFrom, currenciesTo)
+	result := convert(count, currenciesFrom, currenciesTo)
 	fmt.Println("Итого:", result)
 }
 
-func calculateCurrencies(count float64, currenciesFrom, currenciesTo string) float64 {
-	var coefficient float64
-	switch {
-	case currenciesFrom == "USD" && currenciesTo == "EUR":
-		coefficient = USDToEUR
-	case currenciesFrom == "USD" && currenciesTo == "RUB":
-		coefficient = USDToRUB
-	case currenciesFrom == "EUR" && currenciesTo == "RUB":
-		coefficient = EURToRUB
-	case currenciesFrom == "EUR" && currenciesTo == "USD":
-		coefficient = 1 / USDToEUR
-	case currenciesFrom == "RUB" && currenciesTo == "USD":
-		coefficient = USDToEUR / USDToRUB
-	case currenciesFrom == "RUB" && currenciesTo == "EUR":
-		coefficient = 1 / EURToRUB
-	default:
-		coefficient = 1
-	}
-	return coefficient * count
+func convert(amount float64, from string, to string) float64 {
+	usdValue := amount / rates[from]
+	return usdValue * rates[to]
 }
 
 func scanUserData() (string, float64, string) {
