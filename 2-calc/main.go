@@ -54,6 +54,10 @@ func calcAvg(numbers []float64) float64 {
 }
 
 func calcMedian(numbers []float64) float64 {
+	if len(numbers) == 0 {
+		return 0
+	}
+
 	sort.Float64s(numbers)
 
 	if len(numbers)%2 == 0 {
@@ -106,5 +110,9 @@ func scanNumberChain() []float64 {
 
 		numbersInput = append(numbersInput, float64(num))
 	}
+	if len(numbersInput) == 0 {
+		fmt.Println("Ни одно число не было корректным")
+	}
+
 	return numbersInput
 }
