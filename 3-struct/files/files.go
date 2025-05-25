@@ -9,34 +9,28 @@ import (
 func ReadFile(path string) ([]byte, error) {
 	file, err := os.ReadFile(path)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to read file: %w", err)
 	}
 	return file, nil
 }
 
 func IsJSON(file []byte) bool {
-	var jsonFile map[string]interface{}
-	err := json.Unmarshal(file, &jsonFile)
-	if err != nil {
-		return false
-	}
-	return true
+	var jsonFile interface{}
+	return json.Unmarshal(file, &jsonFile) == nil
 }
 
-func WriteFile(content []byte, name string) {
+func WriteFile(content []byte, name string) error {
 	file, err := os.Create(name)
 	if err != nil {
-		fmt.Println(err)
-		return
+		return fmt.Errorf("failed to create file: %w", err)
 	}
 	defer file.Close()
 
 	_, err = file.Write(content)
 
 	if err != nil {
-		fmt.Println(err)
-		return
+		return fmt.Errorf("failed to write file: %w", err)
 	}
 
-	fmt.Println("Запись успешна")
+	return nil
 }

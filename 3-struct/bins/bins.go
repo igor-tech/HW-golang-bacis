@@ -8,43 +8,53 @@ import (
 )
 
 type Bin struct {
-	id        string
-	private   bool
-	createdAt time.Time
-	name      string
+	Id        string
+	Private   bool
+	CreatedAt time.Time
+	Name      string
 }
 
 type BinList struct {
-	bins []*Bin
+	Bins []*Bin
 }
 
 func NewBin(id string, private bool, name string) *Bin {
 	return &Bin{
-		id:        id,
-		private:   private,
-		createdAt: time.Now(),
-		name:      name,
+		Id:        id,
+		Private:   private,
+		CreatedAt: time.Now(),
+		Name:      name,
 	}
 }
 
 func NewBinList(bins []*Bin) *BinList {
 	return &BinList{
-		bins: bins,
+		Bins: bins,
 	}
 }
 
-func (bin *Bin) SaveBin(filePath string) {
-	file, err := json.Marshal(bin)
+func (bin *Bin) SaveBin(filePath string) error {
+	data, err := json.Marshal(bin)
 	if err != nil {
-		fmt.Println(err)
+		return fmt.Errorf("failed to marshal bin: %w", err)
 	}
-	files.WriteFile(file, filePath)
+	err = files.WriteFile(data, filePath)
+	if err != nil {
+		return fmt.Errorf("failed to write file: %w", err)
+	}
+
+	return nil
 }
 
-func (bin *Bin) ReadBinsList(filePath string) []byte {
-	file, err := files.ReadFile(filePath)
+func ReadBinsList(filePath string) (BinList, error) {
+	data, err := files.ReadFile(filePath)
 	if err != nil {
-		fmt.Println(err)
+		return BinList{}, fmt.Errorf("failed to read file: %w", err)
 	}
-	return file
+	var bins BinList
+	err = json.Unmarshal(data, &bins)
+	if err != nil {
+		return BinList{}, fmt.Errorf("failed to unmarshal bins list: %w", err)
+	}
+	return bins, nil
 }
