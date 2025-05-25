@@ -46,15 +46,15 @@ func (bin *Bin) SaveBin(filePath string) error {
 	return nil
 }
 
-func ReadBinsList(filePath string) (BinList, error) {
+func ReadBinsList(filePath string) (*BinList, error) {
 	data, err := files.ReadFile(filePath)
 	if err != nil {
-		return BinList{}, fmt.Errorf("failed to read file: %w", err)
+		return nil, fmt.Errorf("failed to read file: %w", err)
 	}
 	var bins BinList
 	err = json.Unmarshal(data, &bins)
 	if err != nil {
-		return BinList{}, fmt.Errorf("failed to unmarshal bins list: %w", err)
+		return nil, fmt.Errorf("failed to unmarshal bins list: %w", err)
 	}
-	return bins, nil
+	return &bins, nil
 }
