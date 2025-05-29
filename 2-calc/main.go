@@ -18,21 +18,18 @@ import (
 	- Разбивает строку чисел по запятым и затем делает расчет в зависимости от операции выводя результат
 */
 
+var funcOperation = map[string]func([]float64) float64{
+	"1": calcAvg,
+	"2": calcSum,
+	"3": calcMedian,
+}
+
 func main() {
 	fmt.Println("__ Калькулятор __")
 
-	var result float64
-	operation := scanOperation()
+	operation := strconv.Itoa(scanOperation())
 	numbers := scanNumberChain()
-
-	switch operation {
-	case 1:
-		result = calcAvg(numbers)
-	case 2:
-		result = calcSum(numbers)
-	case 3:
-		result = calcMedian(numbers)
-	}
+	result := funcOperation[operation](numbers)
 
 	fmt.Printf("Результат: %.2f\n", result)
 }
