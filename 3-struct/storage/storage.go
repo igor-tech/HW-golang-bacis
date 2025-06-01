@@ -15,6 +15,14 @@ type Storage struct {
 func NewStorage(filePath string) *Storage {
 	data, err := files.ReadFile(filePath)
 	if err != nil {
+		content, err := json.Marshal(bins.NewBinList())
+		if err != nil {
+			fmt.Printf("failed to marshal empty bin list: %w", err)
+		}
+		err = files.WriteFile(content, filePath)
+		if err != nil {
+			fmt.Println("Error writing file:", err)
+		}
 		return &Storage{
 			filePath: filePath,
 			BinList:  bins.NewBinList(),
@@ -37,8 +45,21 @@ func NewStorage(filePath string) *Storage {
 	}
 }
 func (s *Storage) AddBin(id string, private bool, name string) error {
-	s.BinList.AddBin(id, private, name)
+	err := s.BinList.AddBin(id, private, name)
+	if err != nil {
+		return fmt.Errorf("failed to add bin: %w", err)
+	}
 	return s.Save()
+}
+
+func (s *Storage) RemoveBin(id string) error {
+	for i, bin := range s.BinList.Bins {
+		if bin.Id != id {
+			s.BinList.Bins = append(s.BinList.Bins[:i], s.BinList.Bins[i+1:]...)
+			return s.Save()
+		}
+	}
+	return fmt.Errorf("bin with id %s not found", id)
 }
 
 func (s *Storage) Save() error {

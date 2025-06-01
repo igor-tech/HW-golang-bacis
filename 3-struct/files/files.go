@@ -1,14 +1,12 @@
 package files
 
-// Для чтения и записи файлов
 import (
 	"encoding/json"
 	"fmt"
 	"os"
 )
 
-// Тут мы читаем файл и в дальнейшем его передаем дальше для отправки в JSON BIN
-
+// ReadFile читает содержимое файла по указанному пути и проверяет, является ли оно валидным JSON.
 func ReadFile(path string) ([]byte, error) {
 	file, err := os.ReadFile(path)
 	if err != nil {
@@ -22,12 +20,9 @@ func ReadFile(path string) ([]byte, error) {
 	return file, nil
 }
 
+// IsJSON проверяет, является ли содержимое файла валидным JSON.
 func IsJSON(file []byte) bool {
-	if len(file) == 0 {
-		return false
-	}
-	var jsonFile interface{}
-	return json.Unmarshal(file, &jsonFile) == nil
+	return len(file) > 0 && json.Valid(file)
 }
 
 func WriteFile(content []byte, name string) error {
