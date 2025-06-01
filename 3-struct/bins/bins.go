@@ -1,6 +1,7 @@
 package bins
 
 import (
+	"errors"
 	"time"
 )
 
@@ -15,18 +16,25 @@ type BinList struct {
 	Bins []Bin `json:"bins"`
 }
 
-func NewBin(id string, private bool, name string) *Bin {
+func NewBin(id string, private bool, name string) (*Bin, error) {
+	if id == "" || name == "" {
+		return nil, errors.New("id and name must not be empty")
+	}
 	return &Bin{
 		Id:        id,
 		Private:   private,
 		CreatedAt: time.Now(),
 		Name:      name,
-	}
+	}, nil
 }
 
-func (bl *BinList) AddBin(id string, private bool, name string) {
-	bin := NewBin(id, private, name)
+func (bl *BinList) AddBin(id string, private bool, name string) error {
+	bin, err := NewBin(id, private, name)
+	if err != nil {
+		return err
+	}
 	bl.Bins = append(bl.Bins, *bin)
+	return nil
 }
 
 func NewBinList() *BinList {
